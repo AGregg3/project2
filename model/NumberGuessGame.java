@@ -2,6 +2,9 @@ package model;
 
 import java.util.Random;
 
+import model.strategyPattern.HighLowStrategy;
+import model.strategyPattern.PlayStrategy;
+
 public class NumberGuessGame {
 
 	public static final int MAX_KEY = 100;
@@ -11,8 +14,7 @@ public class NumberGuessGame {
 	private int guess;
 	private boolean showKeyOn;
 	private int attempts;
-	private GameState state;
-	private PlayStratagy stratagy;
+	private PlayStrategy strategy;
 	public String progressMessage;
 
 	public NumberGuessGame() {
@@ -20,8 +22,8 @@ public class NumberGuessGame {
 		guess = -1;
 		showKeyOn = false;
 		attempts = 0;
-		state = GameState.INIT;
-		stratagy = PlayStratagy.HighLow;
+		// state = GameState.INIT;
+		setStrategy(new HighLowStrategy(this)); //default strategy
 	}
 
 	public void start() {
@@ -31,7 +33,7 @@ public class NumberGuessGame {
 		progressMessage = null;
 	}
 
-	private int generateNewKey() {
+	public int generateNewKey() {
 		Random r = new Random();
 		int newKey;
 		do {
@@ -41,50 +43,51 @@ public class NumberGuessGame {
 	}
 
 	public void play(int guess) {
-		++attempts;
-		if (stratagy == PlayStratagy.HighLow) {
-			playHighLow(guess);
-		} else if (stratagy == PlayStratagy.CloserAway) {
-			playCloserAway(guess);
-		}
+	//	this.guess = guess;
+		strategy.play(guess);
 	}
 
-	private void playHighLow(int guess){
-		this.guess = guess;
-		int diff = guess - key;
-		if (diff < 0) {
-			progressMessage = "Go Higher!";
-		} else if (diff == 0) {
-			progressMessage = "You got it! The key was " + key;
-		} else {
-			progressMessage = "Go Lower!";
-		}
-	}
+//	private void playHighLow(int guess){
+//		this.guess = guess;
+//		int diff = guess - key;
+//		if (diff < 0) {
+//			progressMessage = "Go Higher!";
+//		} else if (diff == 0) {
+//			progressMessage = "You got it! The key was " + key;
+//		} else {
+//			progressMessage = "Go Lower!";
+//		}
+//	}
 
-	private void playCloserAway(int guess) { 
-		int prevDiff = Math.abs(key - this.guess);
-		int newDiff = Math.abs(key - guess);
-		this.guess = guess;
-		if (newDiff - prevDiff < 0) {
-			progressMessage = "Getting Closer";
-		} else {
-			progressMessage = "Not getting Closer";
-		}
-	}
+//	private void playCloserAway(int guess) { 
+//		int prevDiff = Math.abs(key - this.guess);
+//		int newDiff = Math.abs(key - guess);
+//		this.guess = guess;
+//		if (newDiff - prevDiff < 0) {
+//			progressMessage = "Getting Closer";
+//		} else {
+//			progressMessage = "Not getting Closer";
+//		}
+//	}
 
 	public int getAttempts() {
 		return attempts;
 	}
+
 	public void setAttempts(int attempts) {
 		this.attempts = attempts;
 	}
 
-	public PlayStratagy getStrategy() {
-		return stratagy;
+	public void incAttempts() {
+		++attempts;
 	}
 
-	public void setStratagy(PlayStratagy stratagy) {
-		this.stratagy = stratagy;
+	public PlayStrategy getStrategy() {
+		return strategy;
+	}
+
+	public void setStrategy(PlayStrategy strategy) {
+		this.strategy = strategy;
 	}
 
 	public boolean isShowKeyOn() {
@@ -93,14 +96,6 @@ public class NumberGuessGame {
 
 	public void setShowKeyOn(boolean showKeyOn) {
 		this.showKeyOn = showKeyOn;
-	}
-
-	public GameState getState() {
-		return state;
-	}
-
-	public void setState(GameState state) {
-		this.state = state;
 	}
 
 	public int getGuess() {

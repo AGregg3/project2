@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import model.GameState;
 import model.NumberGuessGame;
 
 public class NumberEnterListener implements ActionListener  {
@@ -29,8 +28,7 @@ public class NumberEnterListener implements ActionListener  {
 		App.game.play(guess);
 
 		if (guess == App.game.getKey()){
-			App.game.setState(GameState.OVER);
-
+			App.win.goNextState();
 		}
 		numberField.setText("");
 		App.win.updateWindow();
